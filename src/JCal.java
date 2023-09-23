@@ -77,6 +77,46 @@ public class JCal {
         }
     }
 
+    private int getJMonthDays(int month, int year) {
+        if (month > 0 && month < 13)
+            if (month < 7)
+                return 31;
+            else if (month < 12)
+                return 30;
+            else
+            if (isKabiseh(year))
+                return 30;
+            else
+                return 29;
+        else
+            return -1;
+    }
+
+    private String JDate(int dayDiff) {
+        int year = 1401;
+        int month = 10;
+        int day;
+
+        if (dayDiff <= 19) {
+            day = dayDiff + 11;
+        } else {
+            dayDiff -= 19;
+            month++;
+            // now it can be calculated from 1 bahman 1401
+            while (dayDiff > getJMonthDays(month, year)) {
+                dayDiff -= getJMonthDays(month, year);
+
+                month++;
+                if (month > 12) {
+                    month = 1;
+                    year++;
+                }
+            }
+            day = dayDiff;
+        }
+        return String.format("%d-%d-%d", year, month, day);
+    }
+
     private void setDayDiff(int dayDiff) {
         this.dayDiff = dayDiff;
     }
