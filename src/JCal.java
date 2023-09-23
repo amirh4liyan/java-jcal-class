@@ -1,5 +1,5 @@
-import java.util.Calendar;
-import java.util.Date;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class JCal {
     /*     1 January 2023  ≡  11 Dey 1401
@@ -23,31 +23,98 @@ public class JCal {
     };
 
     public JCal() {
+        // Determine Current Date
+        setCurrentYear();
+        setCurrentMonth();
+        setCurrentDay();
+        calcDayDiff(currentYear, currentMonth, currentDay);
+    }
+
+    private void calcDayDiff(int year, String month, int day) {
+        int ans = 0;
+
+        // Day for Years
+        int baseYear = 2023;
+        int yDiff = year - baseYear;
+        ans += yDiff * 365;
+        for (int i = baseYear; i < year; i++)
+            if (isFeb29days(i))
+                ans += 1;
+
+        // Day for Months
+        int index = Arrays.asList(monthNames).indexOf(month);
+        int baseMonthIndex = 0;
+        int baseDay = 1;
+        if (index == baseMonthIndex) {
+            // passed days of current month
+            ans = day - baseDay;
+        } else if (index > baseMonthIndex) {
+            // add Full months days
+            for (int i = baseMonthIndex; i < index; i++)
+                ans += getMonthDays(monthNames[i], year);
+
+            // Day for Days
+            // passed days of current month
+            ans += day - baseDay;
+        }
+        setDayDiff(ans);
+    }
+
+    private int getMonthDays(String month, int year) {
+        switch (month) {
+            case "Apr", "Jun", "Sep", "Nov" -> {
+                return 30;
+            }
+            case "Feb" -> {
+                if (isFeb29days(year))
+                    return 29;
+                else
+                    return 28;
+            }
+            default -> {
+                return 31;
+            }
+        }
+    }
+
+    private void setDayDiff(int dayDiff) {
+        this.dayDiff = dayDiff;
+    }
+
+    private void setCurrentYear() {
+        SimpleDateFormat yf = new SimpleDateFormat("yyyy", Locale.getDefault());
+        currentYear = Integer.parseInt(yf.format(cal));
+    }
+
+    private void setCurrentMonth() {
+        SimpleDateFormat mf = new SimpleDateFormat("MMM", Locale.getDefault());
+        this.currentMonth = mf.format(cal);
+    }
+
+    private void setCurrentDay() {
+        SimpleDateFormat df = new SimpleDateFormat("dd", Locale.getDefault());
+        this.currentDay = Integer.parseInt(df.format(cal));
     }
 
     public int getCurrentYear() {
         return currentYear;
     }
 
-    public void setCurrentYear(int currentYear) {
-        this.currentYear = currentYear;
-    }
-
     public String getCurrentMonth() {
         return currentMonth;
-    }
-
-    public void setCurrentMonth(String currentMonth) {
-        this.currentMonth = currentMonth;
     }
 
     public int getCurrentDay() {
         return currentDay;
     }
 
-    public void setCurrentDay(int currentDay) {
-        this.currentDay = currentDay;
+    public boolean isFeb29days(int year) {
+        return year % 4 == 0;
     }
 
+    public boolean isKabiseh(int year) {
+        List<Integer> list = Arrays.asList(1, 5, 9, 13, 17, 22, 26, 30);
+        return list.contains(year % 33);
+    }
 
 }
