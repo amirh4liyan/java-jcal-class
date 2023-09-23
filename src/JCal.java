@@ -148,6 +148,14 @@ public class JCal {
         return currentDay;
     }
 
+    public int getDayDiff() {
+        return dayDiff;
+    }
+
+    public String getCurrentJDate() {
+        return JDate(getDayDiff());
+    }
+
     public boolean isFeb29days(int year) {
         return year % 4 == 0;
     }
